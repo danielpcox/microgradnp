@@ -5,3 +5,5 @@ Written for my own clarity, but I hope it helps you too.
 Install with `pip install -e .` The only runtime dependency is numpy.
 
 Test with `pytest`.
+
+`main.py` runs a little demo of an MLP doing regression against random data.
