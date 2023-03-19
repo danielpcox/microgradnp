@@ -46,10 +46,10 @@ def test_pow(x):
 def test_matmul():
     x = Value(np.array([[1, 2], [3, 4]]))
     y = Value(np.array([[5, 6], [7, 8]]))
-    z = x @ y
+    z = (x @ y).mean()
     z.backward()
-    assert_almost_equal(x.grad, np.array([[12, 16], [12, 16]]))
-    assert_almost_equal(y.grad, np.array([[4, 4], [6, 6]]))
+    assert_almost_equal(x.grad, np.array([[2.7500, 3.7500], [2.7500, 3.7500]]))
+    assert_almost_equal(y.grad, np.array([[1.0000, 1.0000], [1.5000, 1.5000]]))
 
 def test_mean(x):
     z = x.mean()

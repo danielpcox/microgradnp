@@ -3,10 +3,11 @@ import numpy as np
 class Value:
     def __init__(self, data, _children=(), _op=''):
         self.data = np.array(data)
-        self.grad = None
+        self.grad = np.zeros_like(self.data, dtype=np.float64)
         self._backward = lambda: None
         self._prev = set(_children)
         self._op = _op
+        self._called_backward = False
 
     def __add__(self, other):
         other = other if isinstance(other, Value) else Value(other)
@@ -114,20 +115,38 @@ class Value:
         out._backward = _backward
         return out
 
-    def backward(self, grad=None):
-        if grad is None:
-            if self.grad is None:
-                grad = np.ones_like(self.data)
-            else:
-                return
-        else:
-            grad = np.array(grad)
-        self.grad = grad
+    # def backward(self, grad=None):
+    #     if grad is None:
+    #         if not self._called_backward:
+    #             grad = np.ones_like(self.data)
+    #             self._called_backward = True
+    #         else:
+    #             return
+    #     else:
+    #         grad = np.array(grad)
+    #
+    #     self.grad += grad
+    #
+    #     for v in self._prev:
+    #         v.backward()
+    #
+    #     self._backward()
 
-        for v in self._prev:
-            v.backward()
+    def backward(self):
+        """ Topological sort, then backprop """
+        topo = []
+        visited = set()
+        def build_topo(v):
+            if v not in visited:
+                visited.add(v)
+                for child in v._prev:
+                    build_topo(child)
+                topo.append(v)
+        build_topo(self)
 
-        self._backward()
+        self.grad = np.ones_like(self.data)
+        for v in reversed(topo):
+            v._backward()
 
     def __repr__(self):
         return f"Value(_op={self._op}, grad={self.grad}, data={self.data})"
