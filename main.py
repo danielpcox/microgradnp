@@ -1,6 +1,6 @@
 import numpy as np
-from engine import Value
-from nn import Linear, ReLU, Sequential
+from microgradnp.engine import Value
+from microgradnp.nn import Linear, ReLU, Sequential
 
 if __name__ == '__main__':
 

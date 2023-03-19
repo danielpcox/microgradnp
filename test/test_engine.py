@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from engine import Value
+from microgradnp.engine import Value
 
 # Helper function for comparing gradients
 def assert_almost_equal(actual, expected, rtol=1e-6, atol=1e-6):

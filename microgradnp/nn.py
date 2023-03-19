@@ -1,5 +1,5 @@
 import numpy as np
-from engine import Value
+from microgradnp.engine import Value
 
 class Module:
     def zero_grad(self):
