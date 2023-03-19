@@ -56,8 +56,8 @@ if __name__ == '__main__':
     input_features = 5
     output_features = 3
     hidden_dim = 10
-    n_epochs = 10
-    learning_rate = 0.0001
+    n_epochs = 200
+    learning_rate = 0.01
 
     X = np.random.randn(n_samples, input_features)
     Y = np.random.randn(n_samples, output_features)
