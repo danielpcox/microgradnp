@@ -66,15 +66,6 @@ class Value:
         out._backward = _backward
         return out
 
-    def __radd__(self, other):
-        return self.__add__(other)
-
-    def __rsub__(self, other):
-        return self.__neg__().__add__(other)
-
-    def __rmul__(self, other):
-        return self.__mul__(other)
-
     def __truediv__(self, other):
         other = other if isinstance(other, Value) else Value(other)
         out = Value(self.data / other.data, (self, other), '/')
@@ -85,9 +76,6 @@ class Value:
 
         out._backward = _backward
         return out
-
-    def __rtruediv__(self, other):
-        return self.__pow__(-1).__mul__(other)
 
     def __neg__(self):
         out = Value(-self.data, (self,), 'neg')
@@ -143,6 +131,18 @@ class Value:
         self.grad = np.ones_like(self.data)
         for v in reversed(topo):
             v._backward()
+
+    def __radd__(self, other):
+        return self.__add__(other)
+
+    def __rsub__(self, other):
+        return self.__neg__().__add__(other)
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
+    def __rtruediv__(self, other):
+        return self.__pow__(-1).__mul__(other)
 
     def __repr__(self):
         return f"Value(_op={self._op}, grad={self.grad}, data={self.data})"
