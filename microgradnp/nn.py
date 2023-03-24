@@ -11,7 +11,7 @@ class Module:
 
 class Linear(Module):
     def __init__(self, in_features, out_features):
-        self.W = Value(np.random.randn(in_features, out_features) * 0.01, _op=f'linW:{in_features}->{out_features}')
+        self.W = Value(np.random.uniform(low=-1, high=1, size=(in_features, out_features)), _op=f'linW:{in_features}->{out_features}')
         self.b = Value(np.zeros((1, out_features)), _op=f'linb:{in_features}->{out_features}')
 
     def forward(self, x):
@@ -43,3 +43,5 @@ class Sequential(Module):
         for layer in self.layers:
             layer.zero_grad()
 
+    def __call__(self, x):
+        return self.forward(x)

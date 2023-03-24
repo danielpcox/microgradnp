@@ -7,15 +7,17 @@ if __name__ == '__main__':
     # Define dataset and model
     n_samples = 100
     input_features = 5
+    hidden_dim = 16
     output_features = 3
-    hidden_dim = 10
-    n_epochs = 200
+    n_epochs = 100
     learning_rate = 0.01
 
     X = np.random.randn(n_samples, input_features)
     Y = np.random.randn(n_samples, output_features)
 
     model = Sequential(Linear(input_features, hidden_dim),
+                       ReLU(),
+                       Linear(hidden_dim, hidden_dim),
                        ReLU(),
                        Linear(hidden_dim, output_features))
 

@@ -1,8 +1,11 @@
 import numpy as np
 
+
 class Value:
     def __init__(self, data, _children=(), _op=''):
         self.data = np.array(data)
+        if len(self.data.shape) < 2:
+            self.data = self.data.reshape(1, -1)
         self.grad = np.zeros_like(self.data, dtype=np.float64)
         self._backward = lambda: None
         self._prev = set(_children)
@@ -96,12 +99,20 @@ class Value:
         return out
 
     def mean(self):
-        out_data = np.mean(self.data)
-        out = Value(out_data, (self,), 'mean')
+        out = Value(np.mean(self.data), (self,), 'mean')
 
         def _backward():
             grad_divisor = self.data.size
             self.grad += out.grad / grad_divisor
+
+        out._backward = _backward
+        return out
+
+    def sum(self):
+        out = Value(np.sum(self.data), (self,), 'sum')
+
+        def _backward():
+            self.grad += out.grad
 
         out._backward = _backward
         return out
@@ -115,33 +126,18 @@ class Value:
         out._backward = _backward
         return out
 
-    # def backward(self, grad=None):
-    #     if grad is None:
-    #         if not self._called_backward:
-    #             grad = np.ones_like(self.data)
-    #             self._called_backward = True
-    #         else:
-    #             return
-    #     else:
-    #         grad = np.array(grad)
-    #
-    #     self.grad += grad
-    #
-    #     for v in self._prev:
-    #         v.backward()
-    #
-    #     self._backward()
-
     def backward(self):
         """ Topological sort, then backprop """
         topo = []
         visited = set()
+
         def build_topo(v):
             if v not in visited:
                 visited.add(v)
                 for child in v._prev:
                     build_topo(child)
                 topo.append(v)
+
         build_topo(self)
 
         self.grad = np.ones_like(self.data)
